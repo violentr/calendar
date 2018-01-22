@@ -47,5 +47,27 @@ RSpec.describe BookingsController, type: :controller do
          expect(output).to eq(message)
        end
      end
+     context 'when booking passed start date > passed end date' do
+       before do
+         @room = create(:room)
+         @options = {start: Date.today, end: Date.today + 3.days}
+         3.times {@room.bookings.create(@options) }
+         @start_date = (Date.today + 1.week).to_s 
+         @end_date = (Date.today + 5.days).to_s
+       end
+
+       it 'should create booking' do
+         post :create, {room_id: @room.id, start: @start_date, end: @end_date}, format: :json
+         expect(response).to have_http_status(:success)
+       end
+
+       it 'should return json message' do
+
+         post :create, {room_id: @room.id, start: @start_date, end: @end_date}, format: :json
+         message = {"message" => "Booking created."}
+         output = json_parser(response.body)
+         expect(output).to eq(message)
+       end
+     end
    end
 end
