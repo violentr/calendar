@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe BookingsController, type: :controller do
+  let(:room) { create(:room) }
+  let(:today) { Date.today }
 
   def json_parser(json)
     JSON.parse(json)
@@ -10,10 +12,9 @@ RSpec.describe BookingsController, type: :controller do
 
      context 'when booking conflicts with passed start date' do
        before do
-         room = create(:room)
-         options = {start: Date.today, end: Date.today + 3.days}
+         options = {start: today.to_s, end: (today + 3.days).to_s}
          room.bookings.create(options)
-         params = {room_id: room.id, start: options[:start].to_s, end: options[:end].to_s}
+         params = {room_id: room.id}.merge(options)
 
          post :create, params: params, format: :json
        end
@@ -21,6 +22,7 @@ RSpec.describe BookingsController, type: :controller do
        it 'should return unprocessable_entity' do
          expect(response).to have_http_status(422)
        end
+
        it 'should return json message, "Booking conflicts with an existing booking"' do
          message = {"message" => "Booking conflicts with an existing booking"}
          output = json_parser(response.body)
@@ -30,10 +32,9 @@ RSpec.describe BookingsController, type: :controller do
 
      context 'when booking conflicts with passed end date' do
        before do
-         room = create(:room)
-         options = {start: Date.today, end: Date.today + 3.days}
+         options = {start: today.to_s, end: (today + 3.days).to_s}
          room.bookings.create(options)
-         params = {room_id: room.id, start: options[:start].to_s, end: options[:end].to_s}
+         params = {room_id: room.id}.merge(options)
 
          post :create, params: params, format: :json
        end
@@ -51,12 +52,11 @@ RSpec.describe BookingsController, type: :controller do
 
      context 'when booking passed start date > passed end date' do
        before do
-         room = create(:room)
-         options = {start: Date.today, end: Date.today + 3.days}
+         options = {start: today.to_s, end: (today + 3.days).to_s}
          3.times {room.bookings.create(options) }
-         start_date = (Date.today + 1.week).to_s
-         end_date = (Date.today + 5.days).to_s
-         params = {room_id: room.id, start: start_date, end: end_date}
+         start_date = (today + 1.week).to_s
+         end_date = (today + 5.days).to_s
+         params = {room_id: room.id}.merge(start: start_date, end: end_date)
 
          post :create, params: params , format: :json
        end
@@ -74,12 +74,9 @@ RSpec.describe BookingsController, type: :controller do
 
      context 'when booking passed start date <= passed end date' do
        before do
-         room = create(:room)
-         options = {start: Date.today + 5.days, end: Date.today + 5.days}
+         options = {start: (today + 5.days).to_s, end: (today + 5.days).to_s}
          3.times {room.bookings.create(options) }
-         start_date = Date.today.to_s
-         end_date = Date.today + 6.days
-         params = {room_id: room.id, start: start_date, end: end_date.to_s }
+         params = {room_id: room.id}.merge(options)
          post :create, params: params, format: :json
        end
 
