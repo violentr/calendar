@@ -13,7 +13,7 @@ RSpec.describe BookingsController, type: :controller do
          room = create(:room)
          options = {start: Date.today, end: Date.today + 3.days}
          room.bookings.create(options)
-         params = {room_id: room.id, start: options[:start].to_s}
+         params = {room_id: room.id, start: options[:start].to_s, end: options[:end].to_s}
 
          post :create, params: params, format: :json
        end
@@ -33,7 +33,7 @@ RSpec.describe BookingsController, type: :controller do
          room = create(:room)
          options = {start: Date.today, end: Date.today + 3.days}
          room.bookings.create(options)
-         params = {room_id: room.id, end: options[:end].to_s}
+         params = {room_id: room.id, start: options[:start].to_s, end: options[:end].to_s}
 
          post :create, params: params, format: :json
        end
@@ -71,15 +71,15 @@ RSpec.describe BookingsController, type: :controller do
          expect(output).to eq(message)
        end
      end
-     #TO DO
+
      context 'when booking passed start date <= passed end date' do
        before do
          room = create(:room)
          options = {start: Date.today + 5.days, end: Date.today + 5.days}
          3.times {room.bookings.create(options) }
          start_date = Date.today.to_s
-         end_date = (Date.today + 6.days).to_s
-         params = {room_id: room.id, start: start_date, end: end_date }
+         end_date = Date.today + 6.days
+         params = {room_id: room.id, start: start_date, end: end_date.to_s }
          post :create, params: params, format: :json
        end
 
