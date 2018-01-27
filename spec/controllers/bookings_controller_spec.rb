@@ -21,7 +21,7 @@ RSpec.describe BookingsController, type: :controller do
        it 'should return unprocessable_entity' do
          expect(response).to have_http_status(422)
        end
-       it 'should return json message' do
+       it 'should return json message, "Booking conflicts with an existing booking"' do
          message = {"message" => "Booking conflicts with an existing booking"}
          output = json_parser(response.body)
          expect(output).to eq(message)
@@ -42,7 +42,7 @@ RSpec.describe BookingsController, type: :controller do
          expect(response).to have_http_status(422)
        end
 
-       it 'should return json message' do
+       it 'should return json message Booking conflicts with an existing booking' do
          message = {"message" => "Booking conflicts with an existing booking"}
          output = json_parser(response.body)
          expect(output).to eq(message)
@@ -65,7 +65,7 @@ RSpec.describe BookingsController, type: :controller do
          expect(response).to have_http_status(:success)
        end
 
-       it 'should return json message' do
+       it 'should return json message "Booking created"' do
          message = {"message" => "Booking created."}
          output = json_parser(response.body)
          expect(output).to eq(message)
