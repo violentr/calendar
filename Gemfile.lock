@@ -51,7 +51,7 @@ GEM
       railties (>= 3.0.0)
     faker (1.8.7)
       i18n (>= 0.7)
-    ffi (1.9.14)
+    ffi (1.14.2)
     globalid (0.3.7)
       activesupport (>= 4.1.0)
     i18n (0.7.0)
